@@ -557,8 +557,8 @@ async def modify_preprocessing_config(request: DagRequest):
 # """
 
 # [Clustering/ExecuteClusteringTestingScripts]
-@app.post("/Clustering/ExecuteClusteringTrainingScripts")
-async def execute_inference_scripts(request: DagRequest):
+@app.post("/Clustering/ExecuteClusteringTestingScripts")
+async def execute_clustering_testing_scripts(request: DagRequest):
     """
     根據 TASK_STAGE_TYPE 起 Pod 並執行對應腳本
     """
@@ -574,7 +574,7 @@ async def execute_inference_scripts(request: DagRequest):
     # 獲取 Logger 和 DVCWorker
     logger = logger_manager.get_logger(dag_id, execution_id)
     if logger:
-        logger_manager.log_section_header(logger, "Clustering/ExecuteClusteringTrainingScripts")
+        logger_manager.log_section_header(logger, "Clustering/ExecuteClusteringTestingScripts")
     
 
     # v1 = init_k8s_client()
