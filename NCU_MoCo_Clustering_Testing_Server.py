@@ -35,6 +35,7 @@ import uuid
 
 import time
 import json
+import hashlib
 
 # 设置基本的日志配置
 logging.basicConfig(level=logging.DEBUG)
@@ -587,7 +588,11 @@ async def execute_clustering_testing_scripts(request: DagRequest):
     raw_job_name = f"task-job-{dag_id}-{execution_id}-{task_stage_type}-{uuid.uuid4().hex[:6]}"
     # 將 _ 換成 -，轉小寫，並移除不合法字元
     job_name = re.sub(r'[^a-z0-9\-]+', '', raw_job_name.lower().replace('_', '-'))
-
+    
+    # 長度限制處理（K8s label/name 最多 63 字元）
+    if len(job_name) > 63:
+        hash_suffix = hashlib.sha1(job_name.encode()).hexdigest()[:6]
+        job_name = f"{job_name[:56]}-{hash_suffix}"
     
     # 確保 PVC_NAME 環境變量已設定
     pvc_name = os.getenv("PVC_NAME")
@@ -715,7 +720,7 @@ def wait_for_job_completion(batch_v1, job_name, namespace, logger, timeout=3600)
             raise Exception(f"Job {job_name} failed.")
         time.sleep(10)  # 每 10 秒檢查一次 Job 狀態
 
-# TODO: custermize for clustering training
+#  custermize for clustering testing
 def record_clustering_testing_result_to_mlflow(request: DagRequest, output_dir: str, logger):
     """ 記錄執行結果到 MLflow，包括 clustering 分群結果 """
     os.environ["AWS_ACCESS_KEY_ID"] = os.getenv("AWS_ACCESS_KEY_ID", "default-key")
