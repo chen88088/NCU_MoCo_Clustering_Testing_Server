@@ -11,7 +11,7 @@ import shutil
 import git
 from DVCManager import DVCManager
 from DVCWorker import DVCWorker
-from typing import Dict
+from typing import Dict, Any
 from LoggerManager import LoggerManager
 from kubernetes import client, config
 from DVCManager import DVCManager
@@ -37,7 +37,6 @@ import time
 import json
 import hashlib
 
-# 设置基本的日志配置
 logging.basicConfig(level=logging.DEBUG)
 
 SERVER_MANAGER_URL = "http://10.52.52.136:8000"
@@ -121,7 +120,7 @@ class DagRequest(BaseModel):
     MODEL_VERSION: str
     DEPLOYER_NAME: str
     DEPLOYER_EMAIL: str
-    PIPELINE_CONFIG: Dict[str, str]
+    PIPELINE_CONFIG: Dict[str, Any]
 
 
 # 檢查 PVC 是否已掛載
@@ -548,14 +547,6 @@ async def modify_preprocessing_config(request: DagRequest):
 
     return {"status": "success", "message": "Config modified successfully"}
 
-
-# """
-# # # [Training/ModifyConfig]
-# # @app.post("/Training/ModifyConfig")
-# # async def modify_config(request: DagRequest):
-# #     # pass
-# #     return {"status": "success", "message": f"Config Mofification Successfully!!"}
-# """
 
 # [Clustering/ExecuteClusteringTestingScripts]
 @app.post("/Clustering/ExecuteClusteringTestingScripts")
